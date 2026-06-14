@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCP Foundation — RH Site-55</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg:#080b0f; --bg2:#0d1117; --bg3:#111820; --surface:#141c25;
+  --border:#1e2d3d; --border2:#243344;
+  --accent:#ff6b00; --red:#c0392b; --green:#00c853; --yellow:#ffd600; --cyan:#4fc3f7;
+  --text:#c8d6e5; --text2:#7a9ab5; --text3:#3d5a73; --white:#e8f0f8;
+  --scan:rgba(255,107,0,0.025);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,var(--scan) 2px,var(--scan) 4px);pointer-events:none;z-index:1000;animation:scanmove 8s linear infinite;}
+@keyframes scanmove{0%{background-position:0 0}100%{background-position:0 100px}}
+body::after{content:'';position:fixed;inset:0;opacity:.02;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none;z-index:999;}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ── LOGIN SCREEN ── */
+#login-screen{position:fixed;inset:0;background:var(--bg);z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;}
+#login-screen.hidden{display:none;}
+.login-logo svg{width:72px;height:72px;filter:drop-shadow(0 0 20px var(--accent));animation:logopulse 3s ease-in-out infinite;}
+.login-box{background:var(--bg2);border:1px solid var(--border2);width:380px;padding:0;}
+.login-box-header{background:var(--bg3);border-bottom:1px solid var(--border);padding:1.2rem 1.6rem;text-align:center;}
+.login-box-header .title{font-family:'Teko',sans-serif;font-size:1.4rem;letter-spacing:.15em;color:var(--white);text-transform:uppercase;}
+.login-box-header .sub{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-top:3px;}
+.login-box-body{padding:1.6rem;}
+.login-field{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem;}
+.login-field label{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;}
+.login-field input{background:var(--bg);border:1px solid var(--border2);color:var(--white);font-family:'Share Tech Mono',monospace;font-size:.85rem;padding:10px 14px;outline:none;width:100%;letter-spacing:.08em;transition:border-color .15s;}
+.login-field input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(255,107,0,.1);}
+.login-btn{width:100%;background:rgba(255,107,0,.08);border:1px solid var(--accent);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.15em;padding:12px;cursor:pointer;text-transform:uppercase;transition:all .15s;margin-top:.4rem;}
+.login-btn:hover{background:var(--accent);color:#000;box-shadow:0 0 24px rgba(255,107,0,.4);}
+.login-error{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--red);text-align:center;padding:.5rem;border:1px solid rgba(192,57,43,.3);background:rgba(192,57,43,.07);display:none;letter-spacing:.08em;margin-top:.8rem;}
+.login-error.show{display:block;}
+.login-hint{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--text3);text-align:center;letter-spacing:.1em;padding:.6rem 1.6rem 1.4rem;}
+
+/* ── HEADER ── */
+header{background:linear-gradient(180deg,#0a0f15,var(--bg2));border-bottom:1px solid var(--border2);padding:0 2rem;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;height:64px;}
+.header-left{display:flex;align-items:center;gap:1.2rem;}
+.scp-logo svg{width:42px;height:42px;filter:drop-shadow(0 0 6px var(--accent));animation:logopulse 3s ease-in-out infinite;}
+@keyframes logopulse{0%,100%{filter:drop-shadow(0 0 4px var(--accent))}50%{filter:drop-shadow(0 0 14px var(--accent))}}
+.header-title .main{font-family:'Teko',sans-serif;font-size:1.5rem;font-weight:600;letter-spacing:.15em;color:var(--white);text-transform:uppercase;}
+.header-title .sub{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;}
+.header-right{display:flex;align-items:center;gap:1.2rem;}
+.clearance-badge{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.1em;padding:4px 10px;border:1px solid var(--accent);color:var(--accent);background:rgba(255,107,0,.07);text-transform:uppercase;}
+.clearance-badge.admin-badge{border-color:var(--red);color:var(--red);background:rgba(192,57,43,.1);}
+.status-indicator{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--green);letter-spacing:.1em;text-transform:uppercase;}
+.status-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:blink 1.5s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.clock{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--text2);letter-spacing:.1em;}
+.user-pill{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--border2);padding:4px 12px;cursor:pointer;transition:border-color .15s;}
+.user-pill:hover{border-color:var(--accent);}
+.user-pill-name{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--white);letter-spacing:.08em;}
+.user-pill-role{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--text3);letter-spacing:.08em;}
+.user-pill-dot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.user-pill-dot.admin{background:var(--red);}
+
+/* SEARCH BAR */
+.global-search{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);padding:4px 12px;transition:border-color .15s;}
+.global-search:focus-within{border-color:var(--accent);}
+.global-search input{background:none;border:none;outline:none;color:var(--white);font-family:'Share Tech Mono',monospace;font-size:.68rem;width:180px;letter-spacing:.05em;}
+.global-search input::placeholder{color:var(--text3);}
+.global-search span{color:var(--text3);font-size:.75rem;}
+
+/* CLASSIF BANNER */
+.classif-banner{background:var(--red);text-align:center;padding:5px;font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.25em;font-weight:bold;text-transform:uppercase;color:#fff;animation:bannerpulse 4s ease-in-out infinite;}
+@keyframes bannerpulse{0%,100%{background:var(--red)}50%{background:#9b2335}}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 64px - 30px);}
+
+/* SIDEBAR */
+aside{background:var(--bg2);border-right:1px solid var(--border);padding:1.5rem 0;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;}
+.nav-section{margin-bottom:1.8rem;}
+.nav-section-title{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;padding:0 1.2rem .5rem;border-bottom:1px solid var(--border);margin-bottom:.5rem;}
+.nav-section-title.admin-section{color:var(--red);}
+.nav-item{display:flex;align-items:center;gap:.6rem;padding:.5rem 1.2rem;cursor:pointer;font-size:.9rem;font-weight:500;letter-spacing:.04em;color:var(--text2);text-transform:uppercase;transition:all .15s;border-left:2px solid transparent;}
+.nav-item:hover,.nav-item.active{color:var(--white);background:rgba(255,107,0,.06);border-left-color:var(--accent);}
+.nav-item.admin-item:hover,.nav-item.admin-item.active{background:rgba(192,57,43,.06);border-left-color:var(--red);}
+.nav-item .icon{font-size:.8rem;opacity:.7;}
+.nav-badge{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:.55rem;padding:2px 5px;background:var(--red);color:#fff;border-radius:2px;}
+.nav-badge.green{background:var(--green);color:#000;}
+.admin-only{display:none;}
+.admin-only.visible{display:block;}
+
+/* MAIN */
+main{padding:2rem 2.5rem;background:var(--bg);}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);}
+.page-title{font-family:'Teko',sans-serif;font-size:2.2rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--white);line-height:1;}
+.page-subtitle{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--text3);letter-spacing:.15em;margin-top:4px;text-transform:uppercase;}
+.section{display:none;animation:fadein .3s ease;}
+.section.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* BUTTONS */
+.btn{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.12em;padding:8px 18px;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:rgba(255,107,0,.07);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{background:var(--accent);color:#000;box-shadow:0 0 18px rgba(255,107,0,.4);}
+.btn-danger{border-color:var(--red);color:var(--red);background:rgba(192,57,43,.07);}
+.btn-danger:hover{background:var(--red);color:#fff;box-shadow:0 0 18px rgba(192,57,43,.4);}
+.btn-green{border-color:var(--green);color:var(--green);background:rgba(0,200,83,.07);}
+.btn-green:hover{background:var(--green);color:#000;box-shadow:0 0 18px rgba(0,200,83,.4);}
+.btn-sm{padding:3px 10px;font-size:.58rem;}
+.btn:disabled{opacity:.35;cursor:not-allowed;pointer-events:none;}
+
+/* PANELS */
+.panel{background:var(--surface);border:1px solid var(--border);margin-bottom:1.5rem;}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.4rem;border-bottom:1px solid var(--border);background:var(--bg3);}
+.panel-title{font-family:'Teko',sans-serif;font-size:1.1rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--white);}
+.panel-actions{display:flex;gap:.6rem;align-items:center;}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{background:var(--surface);border:1px solid var(--border);padding:1.2rem 1.4rem;position:relative;overflow:hidden;transition:border-color .2s;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);}
+.stat-card.red::before{background:var(--red)}.stat-card.green::before{background:var(--green)}.stat-card.blue::before{background:var(--cyan)}
+.stat-card:hover{border-color:var(--border2);}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:.5rem;}
+.stat-value{font-family:'Teko',sans-serif;font-size:2.4rem;font-weight:600;color:var(--white);line-height:1;}
+.stat-delta{font-family:'Share Tech Mono',monospace;font-size:.6rem;margin-top:4px;letter-spacing:.08em;}
+.stat-delta.up{color:var(--green)}.stat-delta.down{color:var(--red)}
+.progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;border-radius:2px;transition:width 1s ease;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--bg3);}
+th{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);padding:.7rem 1.2rem;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:.75rem 1.2rem;font-size:.9rem;font-weight:500;border-bottom:1px solid rgba(30,45,61,.5);vertical-align:middle;color:var(--text);}
+tbody tr:hover{background:rgba(255,107,0,.03);}
+tbody tr:last-child td{border-bottom:none;}
+.td-actions{display:flex;gap:.4rem;}
+
+/* TAGS */
+.tag{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.1em;padding:3px 7px;border-radius:2px;text-transform:uppercase;display:inline-block;white-space:nowrap;}
+.tag-orange{background:rgba(255,107,0,.15);color:var(--accent);border:1px solid rgba(255,107,0,.3);}
+.tag-red{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3);}
+.tag-green{background:rgba(0,200,83,.1);color:var(--green);border:1px solid rgba(0,200,83,.3);}
+.tag-blue{background:rgba(79,195,247,.1);color:var(--cyan);border:1px solid rgba(79,195,247,.3);}
+.tag-yellow{background:rgba(255,214,0,.1);color:var(--yellow);border:1px solid rgba(255,214,0,.3);}
+.tag-gray{background:rgba(100,120,140,.1);color:var(--text2);border:1px solid var(--border2);}
+.tag-purple{background:rgba(142,68,173,.15);color:#c39bd3;border:1px solid rgba(142,68,173,.3);}
+
+/* CLEARANCE */
+.clr{font-family:'Share Tech Mono',monospace;font-size:.65rem;}
+.clr-1{color:#ecf0f1}.clr-2{color:#3498db}.clr-3{color:#2ecc71}.clr-4{color:#e67e22}.clr-5{color:#e74c3c}
+.id-code{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--text3);letter-spacing:.05em;}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;padding:1.4rem;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+label{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;}
+input,select,textarea{background:var(--bg2);border:1px solid var(--border2);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.9rem;font-weight:500;padding:8px 12px;outline:none;transition:border-color .15s;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(255,107,0,.1);}
+input:read-only{opacity:.5;cursor:not-allowed;}
+textarea{resize:vertical;min-height:70px;}
+select option{background:var(--bg2);}
+.form-actions{display:flex;gap:.7rem;padding:1rem 1.4rem;border-top:1px solid var(--border);background:var(--bg3);}
+
+/* ALERTS */
+.alert{display:flex;gap:1rem;padding:1rem 1.2rem;border-left:3px solid;margin-bottom:1rem;background:var(--surface);font-size:.88rem;line-height:1.5;}
+.alert-warn{border-color:var(--yellow);background:rgba(255,214,0,.04);}
+.alert-info{border-color:var(--cyan);background:rgba(79,195,247,.04);}
+.alert-error{border-color:var(--red);background:rgba(192,57,43,.04);}
+.alert-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+.alert-text{color:var(--text2);}
+.alert-text strong{color:var(--white);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);min-width:440px;max-width:620px;width:100%;animation:fadein .2s ease;max-height:90vh;overflow-y:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.4rem;border-bottom:1px solid var(--border);background:var(--bg3);position:sticky;top:0;}
+.modal-title{font-family:'Teko',sans-serif;font-size:1.2rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--white);}
+.modal-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.2rem;line-height:1;}
+.modal-close:hover{color:var(--white);}
+.modal-body{padding:1.4rem;}
+
+/* JOURNAL */
+.journal-entry{display:flex;gap:1rem;padding:.75rem 1.2rem;border-bottom:1px solid rgba(30,45,61,.4);align-items:flex-start;}
+.journal-entry:last-child{border-bottom:none;}
+.journal-entry:hover{background:rgba(255,107,0,.02);}
+.journal-time{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);letter-spacing:.08em;white-space:nowrap;min-width:90px;padding-top:2px;}
+.journal-icon{font-size:.85rem;min-width:20px;text-align:center;}
+.journal-text{font-size:.88rem;color:var(--text2);line-height:1.4;}
+.journal-text strong{color:var(--white);}
+
+/* ADMIN PANEL */
+.admin-banner{background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.3);padding:.8rem 1.2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.8rem;}
+.admin-banner-icon{font-size:1rem;color:var(--red);}
+.admin-banner-text{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--red);letter-spacing:.1em;text-transform:uppercase;}
+
+/* ACCOUNT PANEL */
+.account-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.account-card{background:var(--surface);border:1px solid var(--border);padding:1.2rem;position:relative;overflow:hidden;}
+.account-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.account-card.admin-card::before{background:var(--red);}
+.account-card.user-card::before{background:var(--accent);}
+.account-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;}
+.account-card-name{font-family:'Teko',sans-serif;font-size:1.1rem;letter-spacing:.08em;color:var(--white);text-transform:uppercase;}
+.account-card-id{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);letter-spacing:.1em;margin-top:2px;}
+.account-card-actions{display:flex;gap:.4rem;margin-top:.8rem;}
+
+/* READONLY LOCKED */
+.locked-notice{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--text3);letter-spacing:.1em;padding:.5rem .8rem;border:1px dashed var(--border2);text-align:center;text-transform:uppercase;}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:.8rem 2.5rem;font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--bg3);border:1px solid var(--accent);color:var(--white);font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.1em;padding:.8rem 1.2rem;z-index:9999;display:none;animation:fadein .3s ease;max-width:340px;}
+.toast.show{display:flex;gap:.6rem;align-items:center;}
+.toast.error{border-color:var(--red);}
+.toast.success{border-color:var(--green);}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ LOGIN SCREEN ══════════════════════ -->
+<div id="login-screen">
+  <div class="login-logo">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" stroke="#ff6b00" stroke-width="4"/>
+      <circle cx="50" cy="50" r="18" fill="none" stroke="#ff6b00" stroke-width="4"/>
+      <line x1="50" y1="4" x2="50" y2="32" stroke="#ff6b00" stroke-width="4"/>
+      <line x1="50" y1="68" x2="50" y2="96" stroke="#ff6b00" stroke-width="4"/>
+      <line x1="4" y1="50" x2="32" y2="50" stroke="#ff6b00" stroke-width="4"/>
+      <line x1="68" y1="50" x2="96" y2="50" stroke="#ff6b00" stroke-width="4"/>
+      <circle cx="50" cy="50" r="6" fill="#ff6b00"/>
+    </svg>
+  </div>
+  <div class="login-box">
+    <div class="login-box-header">
+      <div class="title">SCP Foundation</div>
+      <div class="sub">Portail RH Sécurisé — Site-55</div>
+    </div>
+    <div class="login-box-body">
+      <div class="login-field">
+        <label>Identifiant Agent</label>
+        <input id="login-user" type="text" placeholder="ex : RH-0042" autocomplete="off" />
+      </div>
+      <div class="login-field">
+        <label>Mot de passe</label>
+        <input id="login-pass" type="password" placeholder="••••••••" />
+      </div>
+      <button class="login-btn" onclick="doLogin()">▶ Connexion Sécurisée</button>
+      <div class="login-error" id="login-error">IDENTIFIANTS INCORRECTS — ACCÈS REFUSÉ</div>
+    </div>
+    <div class="login-hint">COMPTES PAR DÉFAUT · Admin : admin / scp-admin · Utilisateur : rh-agent / rh2025</div>
+  </div>
+</div>
+
+<!-- ══════════════════════ APP ══════════════════════ -->
+<header>
+  <div class="header-left">
+    <div class="scp-logo">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" stroke="#ff6b00" stroke-width="4"/>
+        <circle cx="50" cy="50" r="18" fill="none" stroke="#ff6b00" stroke-width="4"/>
+        <line x1="50" y1="4" x2="50" y2="32" stroke="#ff6b00" stroke-width="4"/>
+        <line x1="50" y1="68" x2="50" y2="96" stroke="#ff6b00" stroke-width="4"/>
+        <line x1="4" y1="50" x2="32" y2="50" stroke="#ff6b00" stroke-width="4"/>
+        <line x1="68" y1="50" x2="96" y2="50" stroke="#ff6b00" stroke-width="4"/>
+        <circle cx="50" cy="50" r="6" fill="#ff6b00"/>
+      </svg>
+    </div>
+    <div class="header-title">
+      <div class="main">SCP Foundation</div>
+      <div class="sub">Ressources Humaines — Site-55</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="global-search">
+      <span>⌕</span>
+      <input id="globalSearch" placeholder="Rechercher un agent, ID…" oninput="handleSearch(this.value)" />
+    </div>
+    <div class="clearance-badge" id="header-badge">Niveau 3 — Confidentiel</div>
+    <div class="clock" id="clock">--:--:--</div>
+    <div class="user-pill" onclick="showSection('compte',document.querySelector('[onclick*=compte]'))">
+      <div class="user-pill-dot" id="user-dot"></div>
+      <div>
+        <div class="user-pill-name" id="user-pill-name">—</div>
+        <div class="user-pill-role" id="user-pill-role">—</div>
+      </div>
+    </div>
+    <div class="status-indicator"><div class="status-dot"></div>En ligne</div>
+  </div>
+</header>
+
+<div class="classif-banner">⬛ DOCUMENT CONFIDENTIEL — NIVEAU 3 — USAGE INTERNE FONDATION SCP UNIQUEMENT — SITE-55 ⬛</div>
+
+<div class="layout">
+<!-- SIDEBAR -->
+<aside>
+  <div class="nav-section">
+    <div class="nav-section-title">Tableau de Bord</div>
+    <div class="nav-item active" onclick="showSection('dashboard',this)"><span class="icon">◈</span> Vue Générale</div>
+    <div class="nav-item" onclick="showSection('journal',this)"><span class="icon">◈</span> Journal d'Activité</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Personnel</div>
+    <div class="nav-item" onclick="showSection('personnel',this)"><span class="icon">◈</span> Dossiers Agents</div>
+    <div class="nav-item" onclick="showSection('recrutement',this)"><span class="icon">◈</span> Recrutement <span class="nav-badge" id="badge-recrutement">0</span></div>
+    <div class="nav-item" onclick="showSection('promotions',this)"><span class="icon">◈</span> Promotions <span class="nav-badge green" id="badge-promotions">0</span></div>
+    <div class="nav-item" onclick="showSection('mutations',this)"><span class="icon">◈</span> Mutations</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Gestion</div>
+    <div class="nav-item" onclick="showSection('sanctions',this)"><span class="icon">◈</span> Sanctions <span class="nav-badge" id="badge-sanctions">0</span></div>
+    <div class="nav-item" onclick="showSection('evaluations',this)"><span class="icon">◈</span> Évaluations</div>
+    <div class="nav-item" onclick="showSection('stats',this)"><span class="icon">◈</span> Statistiques</div>
+  </div>
+  <!-- ADMIN ONLY SECTION -->
+  <div class="nav-section admin-only" id="nav-admin-section">
+    <div class="nav-section-title admin-section">⬛ Administration</div>
+    <div class="nav-item admin-item" onclick="showSection('admin',this)"><span class="icon">◈</span> Panneau Admin <span class="nav-badge" id="badge-pending">0</span></div>
+    <div class="nav-item admin-item" onclick="showSection('comptes',this)"><span class="icon">◈</span> Comptes Agents</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Session</div>
+    <div class="nav-item" onclick="showSection('compte',this)"><span class="icon">◈</span> Mon Compte</div>
+    <div class="nav-item" onclick="doLogout()"><span class="icon">◈</span> Déconnexion</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main>
+
+<!-- ══ DASHBOARD ══ -->
+<div class="section active" id="section-dashboard">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Tableau de Bord RH</div>
+      <div class="page-subtitle">Site-55 · <span id="dateDisplay"></span></div>
+    </div>
+    <button class="btn" onclick="showSection('recrutement',document.querySelector('[onclick*=recrutement]'))">▶ Nouveau Dossier</button>
+  </div>
+  <div class="alert alert-warn">
+    <span class="alert-icon">⚠</span>
+    <div class="alert-text"><strong>Alerte :</strong> Suite à l'Incident ██-██-55, 3 agents de l'Escouade Delta-5 sont temporairement reclassifiés. Leurs dossiers sont en cours de révision par la Division O5.</div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card green">
+      <div class="stat-label">Personnel Actif</div>
+      <div class="stat-value" id="stat-actifs">0</div>
+      <div class="stat-delta up" id="stat-actifs-delta">—</div>
+      <div class="progress-bar"><div class="progress-fill" style="background:var(--green);width:0%" id="bar-actifs"></div></div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">Sanctions Actives</div>
+      <div class="stat-value" id="stat-sanctions">0</div>
+      <div class="stat-delta" id="stat-sanctions-delta">—</div>
+      <div class="progress-bar"><div class="progress-fill" style="background:var(--red)" id="bar-sanctions"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Recrutements en cours</div>
+      <div class="stat-value" id="stat-recrut">0</div>
+      <div class="stat-delta up" id="stat-recrut-delta">—</div>
+      <div class="progress-bar"><div class="progress-fill" style="background:var(--accent)" id="bar-recrut"></div></div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">En attente validation</div>
+      <div class="stat-value" id="stat-pending">0</div>
+      <div class="stat-delta up" id="stat-pending-delta">—</div>
+      <div class="progress-bar"><div class="progress-fill" style="background:var(--cyan)" id="bar-pending"></div></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Activité Récente</div>
+      <button class="btn btn-sm" onclick="showSection('journal',document.querySelector('[onclick*=journal]'))">Voir tout →</button>
+    </div>
+    <div id="recent-activity">
+      <div style="padding:1.5rem;text-align:center;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">Aucune activité enregistrée</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ JOURNAL ══ -->
+<div class="section" id="section-journal">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Journal d'Activité</div>
+      <div class="page-subtitle">Historique complet des actions RH — Site-55</div>
+    </div>
+    <button class="btn btn-danger btn-sm" onclick="requireAdmin(clearJournal)">✗ Vider le journal</button>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">Registre Chronologique</div></div>
+    <div id="journal-list">
+      <div style="padding:2rem;text-align:center;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.1em;">JOURNAL VIDE — EN ATTENTE D'ACTIVITÉ</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PERSONNEL ══ -->
+<div class="section" id="section-personnel">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Dossiers Agents</div>
+      <div class="page-subtitle">Registre du personnel — Site-55</div>
+    </div>
+    <div style="display:flex;gap:.7rem;">
+      <input id="filterPersonnel" placeholder="Filtrer…" style="width:160px;height:34px;font-size:.8rem;" oninput="filterTable('personnel-tbody',this.value)" />
+      <button class="btn" onclick="requireAdmin(openAgentModal)">▶ Ajouter un agent</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Registre Complet</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);letter-spacing:.1em;" id="personnel-count">0 agents</div>
+    </div>
+    <table>
+      <thead><tr><th>ID</th><th>Nom / Alias</th><th>Département</th><th>Habilitation</th><th>Statut</th><th>Actions</th></tr></thead>
+      <tbody id="personnel-tbody">
+        <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">AUCUN AGENT ENREGISTRÉ</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ RECRUTEMENT ══ -->
+<div class="section" id="section-recrutement">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Recrutement</div>
+      <div class="page-subtitle">Intégration de nouveaux agents — Formulaire RH-03A</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">Nouveau Dossier de Candidature</div></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Nom de code / Alias *</label><input id="r-alias" placeholder='ex : Agent "Spectre"' /></div>
+      <div class="form-group"><label>Nom réel (classifié)</label><input id="r-nom" placeholder="Stocké chiffré niveau 4" /></div>
+      <div class="form-group"><label>Département *</label>
+        <select id="r-dept">
+          <option value="">— Sélectionner —</option>
+          <option>Département Scientifique</option>
+          <option>Force d'Intervention Mobile</option>
+          <option>Département Sécuritaire</option>
+          <option>Département de l'I&ST</option>
+          <option>Département Médical</option>
+          <option>Département Administratif</option>
+          <option>Bureau du Comité d'Ethique</option>
+          <option>Département de la Justice Interne</option>
+          <option>Département des Ressources Humaines</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Habilitation initiale *</label>
+        <select id="r-hab">
+          <option value="1">Niveau 1 — PUBLIC RESTREINT</option>
+          <option value="2">Niveau 2 — RESTREINT</option>
+          <option value="3" selected>Niveau 3 — CONFIDENTIEL</option>
+          <option value="4">Niveau 4 — SECRET</option>
+          <option value="5">Niveau 5 — TOP SECRET</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Type de recrutement</label>
+        <select id="r-type">
+          <option>Standard</option>
+          <option>Militaire</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Responsable validateur (ID)</label><input id="r-valid" placeholder="ID de l'agent validateur" /></div>
+      <div class="form-group full"><label>Notes / Contexte de recrutement</label><textarea id="r-notes" placeholder="Aptitudes particulières, contexte…"></textarea></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-green" onclick="submitRecrutement()">✔ Soumettre le dossier</button>
+      <button class="btn btn-danger" onclick="clearForm('recrutement')">✗ Effacer</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Candidatures en Attente</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);" id="recrut-count">0 dossiers</div>
+    </div>
+    <table>
+      <thead><tr><th>Réf.</th><th>Alias</th><th>Département</th><th>Type</th><th>Habilitation</th><th>Statut</th><th>Actions</th></tr></thead>
+      <tbody id="recrut-tbody">
+        <tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">AUCUN DOSSIER EN ATTENTE</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ PROMOTIONS ══ -->
+<div class="section" id="section-promotions">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Promotions & Habilitations</div>
+      <div class="page-subtitle">Modification du niveau de clearance — Formulaire RH-06</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">Demande de Promotion / Rétrogradation</div></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Agent concerné (ID) *</label><input id="p-id" placeholder="ex : RH-0042" /></div>
+      <div class="form-group"><label>Nouveau niveau d'habilitation *</label>
+        <select id="p-hab">
+          <option value="1">Niveau 1 — PUBLIC RESTREINT</option>
+          <option value="2">Niveau 2 — RESTREINT</option>
+          <option value="3">Niveau 3 — CONFIDENTIEL</option>
+          <option value="4">Niveau 4 — SECRET</option>
+          <option value="5">Niveau 5 — TOP SECRET</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Type</label>
+        <select id="p-type">
+          <option>Promotion (mérite)</option>
+          <option>Promotion (ancienneté)</option>
+          <option>Rétrogradation disciplinaire</option>
+          <option>Reclassification d'urgence</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Autorisé par (ID)</label><input id="p-auth" placeholder="ID autorisateur (Niveau 4+)" /></div>
+      <div class="form-group full"><label>Justification</label><textarea id="p-notes" placeholder="Motif de la promotion ou rétrogradation…"></textarea></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-green" onclick="submitPromotion()">✔ Soumettre la demande</button>
+      <button class="btn btn-danger" onclick="clearForm('promotions')">✗ Annuler</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Historique des Promotions</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);" id="promo-count">0 enregistrements</div>
+    </div>
+    <table>
+      <thead><tr><th>Date</th><th>Agent (ID)</th><th>Ancien Niveau</th><th>Nouveau Niveau</th><th>Type</th><th>Autorisé par</th><th>Statut</th></tr></thead>
+      <tbody id="promo-tbody">
+        <tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">AUCUNE PROMOTION ENREGISTRÉE</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ MUTATIONS ══ -->
+<div class="section" id="section-mutations">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Mutations & Transferts</div>
+      <div class="page-subtitle">Formulaire RH-07B — Gestion inter-sites</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">Nouvelle Demande de Mutation</div></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Agent (ID) *</label><input id="m-id" placeholder="ex : RH-0042" /></div>
+      <div class="form-group"><label>Site de destination *</label>
+        <select id="m-dest">
+          <option>Site-17</option><option>Site-19</option><option>Site-23</option><option>Site-34</option>
+          <option>Site-██</option><option>Zone-██</option><option>Base-Arctique-II</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Motif</label>
+        <select id="m-motif">
+          <option>Besoin opérationnel</option><option>Demande de l'agent</option>
+          <option>Mesure disciplinaire</option><option>Reclassification</option><option>Programme spécial</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Priorité</label>
+        <select id="m-prio"><option>Normal</option><option>Urgent</option><option>Immédiat</option></select>
+      </div>
+      <div class="form-group full"><label>Justification</label><textarea id="m-notes" placeholder="Contexte, raisons, autorisations requises…"></textarea></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-green" onclick="submitMutation()">✔ Soumettre</button>
+      <button class="btn btn-danger" onclick="clearForm('mutations')">✗ Annuler</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Transferts Enregistrés</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);" id="mutation-count">0 transferts</div>
+    </div>
+    <table>
+      <thead><tr><th>Date</th><th>Agent (ID)</th><th>Destination</th><th>Motif</th><th>Priorité</th><th>Statut</th></tr></thead>
+      <tbody id="mutation-tbody">
+        <tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">AUCUN TRANSFERT ENREGISTRÉ</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ SANCTIONS ══ -->
+<div class="section" id="section-sanctions">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Sanctions Disciplinaires</div>
+      <div class="page-subtitle">Formulaire RH-11 — Procédures disciplinaires</div>
+    </div>
+  </div>
+  <div class="alert alert-error">
+    <span class="alert-icon">✖</span>
+    <div class="alert-text"><strong>Avertissement :</strong> Toute sanction de Grade C ou supérieur requiert l'approbation d'un Administrateur. L'ouverture d'un dossier disciplinaire est soumise à validation.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">Nouveau Rapport Disciplinaire</div></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Agent mis en cause (ID) *</label><input id="s-id" placeholder="ID de l'agent" /></div>
+      <div class="form-group"><label>Sévérité *</label>
+        <select id="s-grade">
+          <option value="A">Grade A — Avertissement écrit</option>
+          <option value="B">Grade B — Suspension temporaire</option>
+          <option value="C">Grade C — Rétrogradation</option>
+          <option value="D">Grade D — Révocation</option>
+          <option value="E">Grade E — Protocole d'exécution</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Type d'infraction</label>
+        <select id="s-type">
+          <option>Violation de protocole de sécurité</option>
+          <option>Insubordination</option>
+          <option>Accès non autorisé</option>
+          <option>Exposition volontaire à une anomalie</option>
+          <option>Fuite d'information classifiée</option>
+          <option>Sabotage</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Rapporteur (ID)</label><input id="s-rapporteur" placeholder="Votre ID agent" /></div>
+      <div class="form-group full"><label>Rapport détaillé</label><textarea id="s-detail" placeholder="Description des faits, témoins, preuves…" style="min-height:90px"></textarea></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-danger" onclick="submitSanction()">⚠ Soumettre le rapport</button>
+      <button class="btn btn-danger" onclick="clearForm('sanctions')">✗ Effacer</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Dossiers Disciplinaires</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);" id="sanction-count">0 dossiers</div>
+    </div>
+    <table>
+      <thead><tr><th>Réf.</th><th>Agent</th><th>Infraction</th><th>Grade</th><th>Rapporteur</th><th>Statut</th><th>Actions</th></tr></thead>
+      <tbody id="sanction-tbody">
+        <tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">AUCUN DOSSIER DISCIPLINAIRE</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ EVALUATIONS ══ -->
+<div class="section" id="section-evaluations">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Évaluations</div>
+      <div class="page-subtitle">Formulaire RH-08 — Rapports de performance</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">Saisir une Évaluation</div></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Agent évalué (ID) *</label><input id="e-id" placeholder="ID de l'agent" /></div>
+      <div class="form-group"><label>Évaluateur (ID) *</label><input id="e-eval" placeholder="ID évaluateur" /></div>
+      <div class="form-group"><label>Compétences Techniques (1–5)</label>
+        <select id="e-tech"><option value="1">1 — Insuffisant</option><option value="2">2 — En développement</option><option value="3" selected>3 — Satisfaisant</option><option value="4">4 — Bien</option><option value="5">5 — Excellent</option></select>
+      </div>
+      <div class="form-group"><label>Aptitudes Psychologiques (1–5)</label>
+        <select id="e-psy"><option value="1">1 — Insuffisant</option><option value="2">2 — En développement</option><option value="3" selected>3 — Satisfaisant</option><option value="4">4 — Bien</option><option value="5">5 — Excellent</option></select>
+      </div>
+      <div class="form-group"><label>Respect des Protocoles (1–5)</label>
+        <select id="e-proto"><option value="1">1 — Insuffisant</option><option value="2">2 — En développement</option><option value="3" selected>3 — Satisfaisant</option><option value="4">4 — Bien</option><option value="5">5 — Excellent</option></select>
+      </div>
+      <div class="form-group"><label>Travail d'équipe (1–5)</label>
+        <select id="e-team"><option value="1">1 — Insuffisant</option><option value="2">2 — En développement</option><option value="3" selected>3 — Satisfaisant</option><option value="4">4 — Bien</option><option value="5">5 — Excellent</option></select>
+      </div>
+      <div class="form-group"><label>Recommandation</label>
+        <select id="e-reco"><option>Maintien du poste</option><option>Promotion recommandée</option><option>Formation complémentaire</option><option>Reclassification</option><option>Fin de contrat conseillée</option></select>
+      </div>
+      <div class="form-group"><label>Score global (/100)</label><input id="e-score" type="number" min="0" max="100" placeholder="Auto-calculé si vide" /></div>
+      <div class="form-group full"><label>Commentaires</label><textarea id="e-notes" placeholder="Observations générales, incidents notables…"></textarea></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-green" onclick="submitEvaluation()">✔ Soumettre l'évaluation</button>
+      <button class="btn btn-danger" onclick="clearForm('evaluations')">✗ Annuler</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Évaluations Enregistrées</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);" id="eval-count">0 évaluations</div>
+    </div>
+    <table>
+      <thead><tr><th>Date</th><th>Agent</th><th>Évaluateur</th><th>Score</th><th>Recommandation</th></tr></thead>
+      <tbody id="eval-tbody">
+        <tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">AUCUNE ÉVALUATION ENREGISTRÉE</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ STATS ══ -->
+<div class="section" id="section-stats">
+  <div class="page-header">
+    <div><div class="page-title">Statistiques RH</div><div class="page-subtitle">Analyse du personnel — Site-55</div></div>
+  </div>
+  <div class="alert alert-info"><span class="alert-icon">ℹ</span><div class="alert-text">Les statistiques se mettent à jour automatiquement à chaque action.</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+    <div class="panel"><div class="panel-header"><div class="panel-title">Répartition par Département</div></div><div id="stats-dept" style="padding:1rem;"></div></div>
+    <div class="panel"><div class="panel-header"><div class="panel-title">Répartition par Habilitation</div></div><div id="stats-hab" style="padding:1rem;"></div></div>
+    <div class="panel"><div class="panel-header"><div class="panel-title">Répartition par Statut</div></div><div id="stats-statut" style="padding:1rem;"></div></div>
+    <div class="panel"><div class="panel-header"><div class="panel-title">Résumé Global</div></div><div id="stats-global" style="padding:1rem;"></div></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ══ -->
+<div class="section" id="section-admin">
+  <div class="page-header">
+    <div><div class="page-title">Panneau Administrateur</div><div class="page-subtitle">Validation des demandes en attente — Accès restreint</div></div>
+  </div>
+  <div class="admin-banner"><span class="admin-banner-icon">⬛</span><span class="admin-banner-text">Accès Administrateur — Toutes les actions sont enregistrées et irréversibles</span></div>
+
+  <!-- RECRUTEMENTS EN ATTENTE -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Candidatures à Valider</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);" id="admin-recrut-count">0</div>
+    </div>
+    <table>
+      <thead><tr><th>Réf.</th><th>Alias</th><th>Département</th><th>Type</th><th>Habilitation</th><th>Soumis par</th><th>Décision Admin</th></tr></thead>
+      <tbody id="admin-recrut-tbody">
+        <tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">AUCUNE CANDIDATURE EN ATTENTE</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PROMOTIONS EN ATTENTE -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Promotions à Valider</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);" id="admin-promo-count">0</div>
+    </div>
+    <table>
+      <thead><tr><th>Date</th><th>Agent</th><th>Niv. actuel</th><th>Niv. demandé</th><th>Type</th><th>Demandeur</th><th>Décision Admin</th></tr></thead>
+      <tbody id="admin-promo-tbody">
+        <tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">AUCUNE PROMOTION EN ATTENTE</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SANCTIONS EN ATTENTE -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Sanctions à Valider</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);" id="admin-sanction-count">0</div>
+    </div>
+    <table>
+      <thead><tr><th>Réf.</th><th>Agent</th><th>Infraction</th><th>Grade</th><th>Rapporteur</th><th>Décision Admin</th></tr></thead>
+      <tbody id="admin-sanction-tbody">
+        <tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">AUCUNE SANCTION EN ATTENTE</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MUTATIONS EN ATTENTE -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Mutations à Valider</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);" id="admin-mutation-count">0</div>
+    </div>
+    <table>
+      <thead><tr><th>Réf.</th><th>Agent</th><th>Destination</th><th>Motif</th><th>Priorité</th><th>Décision Admin</th></tr></thead>
+      <tbody id="admin-mutation-tbody">
+        <tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">AUCUNE MUTATION EN ATTENTE</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ COMPTES ══ -->
+<div class="section" id="section-comptes">
+  <div class="page-header">
+    <div><div class="page-title">Gestion des Comptes</div><div class="page-subtitle">Utilisateurs du système RH — Accès Admin requis</div></div>
+    <button class="btn" onclick="openModal('modal-compte')">▶ Créer un compte</button>
+  </div>
+  <div class="admin-banner"><span class="admin-banner-icon">⬛</span><span class="admin-banner-text">Panneau de gestion des accès au système RH — Niveau 5 requis pour créer des administrateurs</span></div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">Comptes Enregistrés</div><div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);" id="comptes-count">0 comptes</div></div>
+    <table>
+      <thead><tr><th>Identifiant</th><th>Nom</th><th>Rôle</th><th>Créé le</th><th>Dernière connexion</th><th>Actions</th></tr></thead>
+      <tbody id="comptes-tbody">
+        <tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:.7rem;">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ MON COMPTE ══ -->
+<div class="section" id="section-compte">
+  <div class="page-header">
+    <div><div class="page-title">Mon Compte</div><div class="page-subtitle">Informations de session — Site-55</div></div>
+    <button class="btn btn-danger" onclick="doLogout()">↩ Déconnexion</button>
+  </div>
+  <div id="compte-content"></div>
+</div>
+
+</main>
+</div>
+
+<!-- MODAL AGENT -->
+<div class="modal-overlay" id="modal-agent">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-agent-title">Ajouter un Agent</div>
+      <button class="modal-close" onclick="closeModal('modal-agent')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid" style="padding:0">
+        <div class="form-group"><label>Alias / Nom de code *</label><input id="a-alias" placeholder='ex : Dr. Lefèvre' /></div>
+        <div class="form-group"><label>ID Agent (auto si vide)</label><input id="a-id" placeholder="ex : RH-0042" /></div>
+        <div class="form-group"><label>Département *</label>
+          <select id="a-dept">
+            <option value="">— Sélectionner —</option>
+            <option>Département Scientifique</option>
+            <option>Force d'Intervention Mobile</option>
+            <option>Département Sécuritaire</option>
+            <option>Département de l'I&ST</option>
+            <option>Département Médical</option>
+            <option>Département Administratif</option>
+            <option>Bureau du Comité d'Ethique</option>
+            <option>Département de la Justice Interne</option>
+            <option>Département des Ressources Humaines</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Niveau d'habilitation *</label>
+          <select id="a-hab">
+            <option value="1">Niveau 1</option><option value="2">Niveau 2</option>
+            <option value="3" selected>Niveau 3</option><option value="4">Niveau 4</option><option value="5">Niveau 5</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Statut</label>
+          <select id="a-statut">
+            <option value="Actif">Actif</option><option value="Inactif">Inactif</option>
+            <option value="Suspendu">Suspendu</option><option value="Détaché">Détaché</option>
+            <option value="Décédé">Décédé (ligne de service)</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Rang / Titre</label><input id="a-rang" placeholder="ex : Dr., Sgt., Cpt., Tech." /></div>
+        <input type="hidden" id="a-edit-index" value="" />
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-green" onclick="saveAgent()">✔ Enregistrer</button>
+      <button class="btn btn-danger" onclick="closeModal('modal-agent')">✗ Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL COMPTE -->
+<div class="modal-overlay" id="modal-compte">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-compte-title">Créer un Compte</div>
+      <button class="modal-close" onclick="closeModal('modal-compte')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid" style="padding:0">
+        <div class="form-group"><label>Identifiant *</label><input id="c-login" placeholder="ex : rh-dupont" autocomplete="off" /></div>
+        <div class="form-group"><label>Mot de passe *</label><input id="c-pass" type="password" placeholder="Minimum 6 caractères" /></div>
+        <div class="form-group"><label>Nom affiché *</label><input id="c-name" placeholder="ex : Agent Dupont" /></div>
+        <div class="form-group"><label>Rôle</label>
+          <select id="c-role">
+            <option value="user">Utilisateur RH</option>
+            <option value="admin">Administrateur</option>
+          </select>
+        </div>
+        <input type="hidden" id="c-edit-login" value="" />
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-green" onclick="saveCompte()">✔ Créer</button>
+      <button class="btn btn-danger" onclick="closeModal('modal-compte')">✗ Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MOTIF REFUS -->
+<div class="modal-overlay" id="modal-motif">
+  <div class="modal" style="min-width:360px;max-width:420px;">
+    <div class="modal-header">
+      <div class="modal-title">Motif du Refus</div>
+      <button class="modal-close" onclick="closeModal('modal-motif')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group full">
+        <label>Justification du refus *</label>
+        <textarea id="motif-text" placeholder="Expliquer la raison du refus…" style="min-height:80px"></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-danger" onclick="confirmRefus()">✖ Confirmer le refus</button>
+      <button class="btn" onclick="closeModal('modal-motif')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <span>SCP Foundation — Ressources Humaines — Site-55 — Classifié Niveau 3</span>
+  <span>Sécuriser. Contenir. Protéger.</span>
+  <span>v5.1.0 — © ████ SCP Foundation</span>
+</footer>
+
+<script>
+// ══════════════ STATE ══════════════
+let state = {
+  agents: [], recrutements: [], sanctions: [], promotions: [],
+  mutations: [], evaluations: [], journal: [], idCounter: 1,
+  comptes: [
+    { login:'admin',  pass:'scp-admin', name:'Administrateur',  role:'admin',  createdAt:'Système', lastLogin:null },
+    { login:'rh-agent', pass:'rh2025', name:'Agent RH Dupont',  role:'user',   createdAt:'Système', lastLogin:null }
+  ]
+};
+let currentUser = null;
+let pendingRefusCallback = null;
+
+// ══════════════ UTILS ══════════════
+const DEPTS = ['Département Scientifique','Force d\'Intervention Mobile','Département Sécuritaire','Département de l\'I&ST','Département Médical','Département Administratif','Bureau du Comité d\'Ethique','Département de la Justice Interne','Département des Ressources Humaines'];
+function genId(){ return 'RH-' + String(state.idCounter++).padStart(4,'0'); }
+function now(){ const d=new Date(); return d.toLocaleDateString('fr-FR')+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+function shortNow(){ return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+function genRef(p){ return p+'-'+Date.now().toString().slice(-6); }
+const habLabels={1:'Niv.1',2:'Niv.2',3:'Niv.3',4:'Niv.4',5:'Niv.5'};
+const habNames={1:'PUBLIC RESTREINT',2:'RESTREINT',3:'CONFIDENTIEL',4:'SECRET',5:'TOP SECRET'};
+const habColors={1:'tag-gray',2:'tag-blue',3:'tag-green',4:'tag-orange',5:'tag-red'};
+const statutColors={'Actif':'tag-green','Inactif':'tag-gray','Suspendu':'tag-red','Détaché':'tag-yellow','Décédé':'tag-purple'};
+const gradeColors={'A':'tag-yellow','B':'tag-orange','C':'tag-red','D':'tag-red','E':'tag-red'};
+const isAdmin = () => currentUser && currentUser.role === 'admin';
+
+// ══════════════ CLOCK ══════════════
+function updateClock(){
+  const d=new Date();
+  document.getElementById('clock').textContent=d.toLocaleTimeString('fr-FR')+' UTC';
+  document.getElementById('dateDisplay').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+setInterval(updateClock,1000); updateClock();
+
+// ══════════════ LOGIN ══════════════
+document.getElementById('login-pass').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('login-user').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+
+function doLogin(){
+  const u=document.getElementById('login-user').value.trim();
+  const p=document.getElementById('login-pass').value;
+  const compte=state.comptes.find(c=>c.login===u && c.pass===p);
+  if(!compte){ document.getElementById('login-error').classList.add('show'); return; }
+  document.getElementById('login-error').classList.remove('show');
+  compte.lastLogin=now();
+  currentUser=compte;
+  document.getElementById('login-screen').classList.add('hidden');
+  updateUserUI();
+  addJournal('🔐',`<strong>Connexion</strong> : ${compte.name} [${compte.login}] — Rôle : ${compte.role==='admin'?'Administrateur':'Utilisateur RH'}`);
+  showToast('Bienvenue, '+compte.name,'success');
+}
+
+function doLogout(){
+  addJournal('🔓',`<strong>Déconnexion</strong> : ${currentUser.name} [${currentUser.login}]`);
+  currentUser=null;
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
+  document.getElementById('login-screen').classList.remove('hidden');
+  showSection('dashboard',document.querySelector('[onclick*=dashboard]'));
+}
+
+function updateUserUI(){
+  const a=isAdmin();
+  document.getElementById('user-pill-name').textContent=currentUser.name;
+  document.getElementById('user-pill-role').textContent=a?'ADMINISTRATEUR':'UTILISATEUR RH';
+  document.getElementById('user-dot').className='user-pill-dot'+(a?' admin':'');
+  document.getElementById('header-badge').className='clearance-badge'+(a?' admin-badge':'');
+  document.getElementById('header-badge').textContent=a?'ADMIN — ACCÈS TOTAL':'Niveau 3 — Confidentiel';
+  const adminSection=document.getElementById('nav-admin-section');
+  adminSection.className='nav-section admin-only'+(a?' visible':'');
+  renderCompteInfo();
+}
+
+// ══════════════ ADMIN GUARD ══════════════
+function requireAdmin(fn){
+  if(!isAdmin()){ showToast('Accès refusé — Admin requis','error'); return; }
+  fn();
+}
+
+// ══════════════ NAVIGATION ══════════════
+function showSection(id,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='stats') renderStats();
+  if(id==='admin'){ if(!isAdmin()){showToast('Accès refusé','error');showSection('dashboard',document.querySelector('[onclick*=dashboard]'));return;} renderAdminPanel(); }
+  if(id==='comptes'){ if(!isAdmin()){showToast('Accès refusé','error');showSection('dashboard',document.querySelector('[onclick*=dashboard]'));return;} renderComptes(); }
+}
+
+// ══════════════ TOAST ══════════════
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.className='toast show '+type;
+  t.innerHTML=(type==='success'?'✔ ':type==='error'?'✖ ':'◈ ')+msg;
+  setTimeout(()=>t.className='toast',3200);
+}
+
+// ══════════════ MODAL ══════════════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+
+// ══════════════ JOURNAL ══════════════
+function addJournal(icon,text){
+  const author = currentUser ? ` <span style="color:var(--text3);font-size:.82em;">[${currentUser.login}]</span>` : '';
+  state.journal.unshift({time:shortNow(),date:now(),icon,text:text+author});
+  renderJournal(); renderRecentActivity();
+}
+
+function renderJournal(){
+  const el=document.getElementById('journal-list');
+  if(!state.journal.length){ el.innerHTML='<div style="padding:2rem;text-align:center;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;letter-spacing:.1em;">JOURNAL VIDE</div>'; return; }
+  el.innerHTML=state.journal.map(j=>`<div class="journal-entry"><span class="journal-time">${j.date}</span><span class="journal-icon">${j.icon}</span><span class="journal-text">${j.text}</span></div>`).join('');
+}
+
+function renderRecentActivity(){
+  const el=document.getElementById('recent-activity');
+  const recent=state.journal.slice(0,7);
+  if(!recent.length){ el.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">Aucune activité</div>'; return; }
+  el.innerHTML=recent.map(j=>`<div class="journal-entry"><span class="journal-time">${j.date}</span><span class="journal-icon">${j.icon}</span><span class="journal-text">${j.text}</span></div>`).join('');
+}
+
+function clearJournal(){
+  if(!confirm('Vider le journal d\'activité ?')) return;
+  state.journal=[];
+  renderJournal(); renderRecentActivity();
+  showToast('Journal vidé','success');
+}
+
+// ══════════════ STATS DASHBOARD ══════════════
+function updateStats(){
+  const actifs=state.agents.filter(a=>a.statut==='Actif').length;
+  document.getElementById('stat-actifs').textContent=actifs;
+  document.getElementById('stat-actifs-delta').textContent=state.agents.length+' au total';
+  document.getElementById('bar-actifs').style.width=Math.min(actifs*5,100)+'%';
+
+  const sanctions=state.sanctions.filter(s=>s.statut==='En attente'||s.statut==='En traitement').length;
+  document.getElementById('stat-sanctions').textContent=sanctions;
+  document.getElementById('stat-sanctions-delta').className='stat-delta '+(sanctions>0?'down':'up');
+  document.getElementById('stat-sanctions-delta').textContent=sanctions>0?'▲ Attention requise':'✔ Aucun dossier actif';
+  document.getElementById('bar-sanctions').style.width=Math.min(sanctions*15,100)+'%';
+
+  document.getElementById('stat-recrut').textContent=state.recrutements.length;
+  document.getElementById('stat-recrut-delta').textContent=state.recrutements.length+' dossiers';
+  document.getElementById('bar-recrut').style.width=Math.min(state.recrutements.length*10,100)+'%';
+
+  const pending=pendingCount();
+  document.getElementById('stat-pending').textContent=pending;
+  document.getElementById('stat-pending-delta').textContent=pending>0?'En attente admin':'Aucune validation requise';
+  document.getElementById('bar-pending').style.width=Math.min(pending*10,100)+'%';
+  document.getElementById('badge-recrutement').textContent=state.recrutements.filter(r=>r.statut==='En attente').length;
+  document.getElementById('badge-promotions').textContent=state.promotions.filter(p=>p.statut==='En attente').length;
+  document.getElementById('badge-sanctions').textContent=state.sanctions.filter(s=>s.statut!=='Clos'&&s.statut!=='Refusé').length;
+  document.getElementById('badge-pending').textContent=pending;
+}
+
+function pendingCount(){
+  return state.recrutements.filter(r=>r.statut==='En attente').length
+    + state.promotions.filter(p=>p.statut==='En attente').length
+    + state.sanctions.filter(s=>s.statut==='En attente').length
+    + state.mutations.filter(m=>m.statut==='En attente').length;
+}
+
+// ══════════════ AGENTS ══════════════
+function renderAgents(){
+  const tbody=document.getElementById('personnel-tbody');
+  document.getElementById('personnel-count').textContent=state.agents.length+' agents';
+  if(!state.agents.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">AUCUN AGENT ENREGISTRÉ</td></tr>'; return; }
+  tbody.innerHTML=state.agents.map((a,i)=>`
+    <tr>
+      <td class="id-code">${a.id}</td>
+      <td><strong>${a.rang?a.rang+' ':''}${a.alias}</strong></td>
+      <td>${a.dept}</td>
+      <td><span class="tag ${habColors[a.hab]} clr">${habLabels[a.hab]} — ${habNames[a.hab]}</span></td>
+      <td><span class="tag ${statutColors[a.statut]||'tag-gray'}">${a.statut}</span></td>
+      <td><div class="td-actions">
+        ${isAdmin()?`<button class="btn btn-sm" onclick="editAgent(${i})">✎ Éditer</button><button class="btn btn-danger btn-sm" onclick="deleteAgent(${i})">✗</button>`:'<span class="locked-notice">Lecture seule</span>'}
+      </div></td>
+    </tr>`).join('');
+}
+
+function openAgentModal(){
+  document.getElementById('modal-agent-title').textContent='Ajouter un Agent';
+  ['a-alias','a-id','a-rang'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('a-dept').value='';
+  document.getElementById('a-hab').value='3';
+  document.getElementById('a-statut').value='Actif';
+  document.getElementById('a-edit-index').value='';
+  openModal('modal-agent');
+}
+
+function editAgent(i){
+  if(!isAdmin()){showToast('Accès refusé','error');return;}
+  const a=state.agents[i];
+  document.getElementById('modal-agent-title').textContent='Modifier l\'Agent';
+  document.getElementById('a-alias').value=a.alias;
+  document.getElementById('a-id').value=a.id;
+  document.getElementById('a-dept').value=a.dept;
+  document.getElementById('a-hab').value=a.hab;
+  document.getElementById('a-statut').value=a.statut;
+  document.getElementById('a-rang').value=a.rang||'';
+  document.getElementById('a-edit-index').value=i;
+  openModal('modal-agent');
+}
+
+function saveAgent(){
+  const alias=document.getElementById('a-alias').value.trim();
+  const dept=document.getElementById('a-dept').value;
+  const hab=parseInt(document.getElementById('a-hab').value);
+  const statut=document.getElementById('a-statut').value;
+  const rang=document.getElementById('a-rang').value.trim();
+  const editIdx=document.getElementById('a-edit-index').value;
+  if(!alias||!dept){showToast('Alias et département requis','error');return;}
+  if(editIdx!==''){
+    const a=state.agents[editIdx];
+    a.alias=alias;a.dept=dept;a.hab=hab;a.statut=statut;a.rang=rang;
+    addJournal('✎',`<strong>${a.id}</strong> — Dossier modifié : ${rang?rang+' ':''}${alias} [${dept}] — Statut : ${statut}`);
+    showToast('Agent mis à jour','success');
+  } else {
+    const id=document.getElementById('a-id').value.trim()||genId();
+    state.agents.push({id,alias,dept,hab,statut,rang,createdAt:now()});
+    addJournal('👤',`<strong>Nouvel agent</strong> : ${rang?rang+' ':''}${alias} [${id}] — ${dept} — Niv.${hab}`);
+    showToast('Agent enregistré : '+id,'success');
+  }
+  closeModal('modal-agent');
+  renderAgents(); updateStats();
+}
+
+function deleteAgent(i){
+  if(!isAdmin()){showToast('Accès refusé','error');return;}
+  const a=state.agents[i];
+  if(!confirm(`Supprimer le dossier de ${a.alias} (${a.id}) ?`)) return;
+  state.agents.splice(i,1);
+  addJournal('🗑',`<strong>Dossier supprimé</strong> : ${a.alias} [${a.id}]`);
+  renderAgents(); updateStats();
+  showToast('Dossier supprimé','error');
+}
+
+// ══════════════ RECRUTEMENT ══════════════
+function submitRecrutement(){
+  const alias=document.getElementById('r-alias').value.trim();
+  const dept=document.getElementById('r-dept').value;
+  const hab=parseInt(document.getElementById('r-hab').value);
+  const type=document.getElementById('r-type').value;
+  const notes=document.getElementById('r-notes').value.trim();
+  const valid=document.getElementById('r-valid').value.trim();
+  if(!alias||!dept){showToast('Alias et département requis','error');return;}
+  const ref=genRef('C');
+  state.recrutements.push({ref,alias,dept,hab,type,notes,valid,statut:'En attente',date:now(),submittedBy:currentUser.login});
+  addJournal('📋',`<strong>Candidature soumise</strong> : ${alias} — ${dept} [${ref}] — En attente de validation`);
+  renderRecrutements(); updateStats();
+  clearForm('recrutement');
+  showToast('Candidature soumise : '+ref+' — En attente admin','success');
+}
+
+function renderRecrutements(){
+  const tbody=document.getElementById('recrut-tbody');
+  document.getElementById('recrut-count').textContent=state.recrutements.length+' dossiers';
+  if(!state.recrutements.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">AUCUN DOSSIER EN ATTENTE</td></tr>'; return; }
+  const stColor={
+    'En attente':'tag-yellow','Accepté':'tag-green','Refusé':'tag-red'
+  };
+  tbody.innerHTML=state.recrutements.map((r,i)=>`
+    <tr>
+      <td class="id-code">${r.ref}</td>
+      <td><strong>${r.alias}</strong></td>
+      <td>${r.dept}</td>
+      <td><span class="tag tag-blue">${r.type}</span></td>
+      <td><span class="tag ${habColors[r.hab]}">Niv. ${r.hab}</span></td>
+      <td class="id-code">${r.submittedBy}</td>
+      <td><span class="tag ${stColor[r.statut]||'tag-gray'}">${r.statut}</span></td>
+    </tr>`).join('');
+}
+
+// ══════════════ PROMOTIONS ══════════════
+function submitPromotion(){
+  const id=document.getElementById('p-id').value.trim();
+  const hab=parseInt(document.getElementById('p-hab').value);
+  const type=document.getElementById('p-type').value;
+  const auth=document.getElementById('p-auth').value.trim();
+  const notes=document.getElementById('p-notes').value.trim();
+  if(!id){showToast('ID agent requis','error');return;}
+  const agent=state.agents.find(a=>a.id.toLowerCase()===id.toLowerCase());
+  const oldHab=agent?agent.hab:'?';
+  state.promotions.push({date:now(),agentId:id,oldHab,newHab:hab,type,auth,notes,statut:'En attente',submittedBy:currentUser.login});
+  addJournal('⭐',`<strong>Demande de promotion soumise</strong> : ${id} Niv.${oldHab}→Niv.${hab} [${type}] — En attente validation`);
+  renderPromotions(); updateStats();
+  clearForm('promotions');
+  showToast('Demande soumise — En attente de validation admin','success');
+}
+
+function renderPromotions(){
+  const tbody=document.getElementById('promo-tbody');
+  document.getElementById('promo-count').textContent=state.promotions.length+' enregistrements';
+  if(!state.promotions.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">AUCUNE PROMOTION ENREGISTRÉE</td></tr>'; return; }
+  const stColor={'En attente':'tag-yellow','Validé':'tag-green','Refusé':'tag-red'};
+  tbody.innerHTML=[...state.promotions].reverse().map(p=>`
+    <tr>
+      <td class="id-code">${p.date}</td>
+      <td><strong>${p.agentId}</strong></td>
+      <td><span class="tag ${habColors[p.oldHab]||'tag-gray'}">Niv. ${p.oldHab}</span></td>
+      <td><span class="tag ${habColors[p.newHab]}">Niv. ${p.newHab}</span></td>
+      <td><span class="tag tag-blue">${p.type.split(' ')[0]}</span></td>
+      <td class="id-code">${p.auth||'—'}</td>
+      <td><span class="tag ${stColor[p.statut]||'tag-gray'}">${p.statut}</span></td>
+    </tr>`).join('');
+}
+
+// ══════════════ MUTATIONS ══════════════
+function submitMutation(){
+  const id=document.getElementById('m-id').value.trim();
+  const dest=document.getElementById('m-dest').value;
+  const motif=document.getElementById('m-motif').value;
+  const prio=document.getElementById('m-prio').value;
+  const notes=document.getElementById('m-notes').value.trim();
+  if(!id){showToast('ID agent requis','error');return;}
+  const ref=genRef('TRF');
+  state.mutations.push({ref,date:now(),agentId:id,dest,motif,prio,statut:'En attente',notes,submittedBy:currentUser.login});
+  addJournal('🔄',`<strong>Mutation soumise</strong> : ${id} → ${dest} [${prio}] — En attente validation`);
+  renderMutations(); updateStats();
+  clearForm('mutations');
+  showToast('Mutation soumise — En attente admin','success');
+}
+
+function renderMutations(){
+  const tbody=document.getElementById('mutation-tbody');
+  document.getElementById('mutation-count').textContent=state.mutations.length+' transferts';
+  if(!state.mutations.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">AUCUN TRANSFERT ENREGISTRÉ</td></tr>'; return; }
+  const prioColor={Normal:'tag-gray',Urgent:'tag-orange','Immédiat':'tag-red'};
+  const stColor={'En attente':'tag-yellow','Validé':'tag-green','Refusé':'tag-red','En cours':'tag-orange'};
+  tbody.innerHTML=[...state.mutations].reverse().map(m=>`
+    <tr>
+      <td class="id-code">${m.date}</td>
+      <td><strong>${m.agentId}</strong></td>
+      <td>${m.dest}</td>
+      <td><span class="tag tag-blue">${m.motif.split(' ')[0]}</span></td>
+      <td><span class="tag ${prioColor[m.prio]||'tag-gray'}">${m.prio}</span></td>
+      <td><span class="tag ${stColor[m.statut]||'tag-gray'}">${m.statut}</span></td>
+    </tr>`).join('');
+}
+
+// ══════════════ SANCTIONS ══════════════
+function submitSanction(){
+  const id=document.getElementById('s-id').value.trim();
+  const grade=document.getElementById('s-grade').value;
+  const type=document.getElementById('s-type').value;
+  const rapp=document.getElementById('s-rapporteur').value.trim();
+  const detail=document.getElementById('s-detail').value.trim();
+  if(!id){showToast('ID agent requis','error');return;}
+  const ref=genRef('DIS');
+  state.sanctions.push({ref,date:now(),agentId:id,grade,type,rapp,detail,statut:'En attente',submittedBy:currentUser.login});
+  addJournal('⚠',`<strong>Rapport disciplinaire soumis</strong> [Grade ${grade}] : ${id} — ${type} — En attente validation`);
+  renderSanctions(); updateStats();
+  clearForm('sanctions');
+  showToast('Rapport soumis — En attente de validation admin','error');
+}
+
+function renderSanctions(){
+  const tbody=document.getElementById('sanction-tbody');
+  const actifs=state.sanctions.filter(s=>s.statut!=='Clos'&&s.statut!=='Refusé').length;
+  document.getElementById('sanction-count').textContent=actifs+' dossiers actifs';
+  if(!state.sanctions.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">AUCUN DOSSIER DISCIPLINAIRE</td></tr>'; return; }
+  const stColor={'En attente':'tag-yellow','En traitement':'tag-orange','Clos':'tag-gray','Refusé':'tag-red','Validé':'tag-green'};
+  tbody.innerHTML=[...state.sanctions].reverse().map((s,ri)=>{
+    const i=state.sanctions.length-1-ri;
+    return `<tr>
+      <td class="id-code">${s.ref}</td>
+      <td><strong>${s.agentId}</strong></td>
+      <td>${s.type}</td>
+      <td><span class="tag ${gradeColors[s.grade]||'tag-gray'}">Grade ${s.grade}</span></td>
+      <td class="id-code">${s.rapp||'—'}</td>
+      <td><span class="tag ${stColor[s.statut]||'tag-gray'}">${s.statut}</span></td>
+      <td><div class="td-actions">
+        ${s.statut==='En traitement'&&isAdmin()?`<button class="btn btn-green btn-sm" onclick="closeSanction(${i})">✔ Clore</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function closeSanction(i){
+  if(!isAdmin()){showToast('Accès refusé','error');return;}
+  state.sanctions[i].statut='Clos';
+  addJournal('✔',`<strong>Sanction close</strong> : ${state.sanctions[i].agentId} [${state.sanctions[i].ref}]`);
+  renderSanctions(); updateStats();
+  showToast('Dossier clos','success');
+}
+
+// ══════════════ EVALUATIONS ══════════════
+function submitEvaluation(){
+  const id=document.getElementById('e-id').value.trim();
+  const eval_=document.getElementById('e-eval').value.trim();
+  const score=document.getElementById('e-score').value;
+  const reco=document.getElementById('e-reco').value;
+  const notes=document.getElementById('e-notes').value.trim();
+  const t=parseInt(document.getElementById('e-tech').value);
+  const p=parseInt(document.getElementById('e-psy').value);
+  const pr=parseInt(document.getElementById('e-proto').value);
+  const tm=parseInt(document.getElementById('e-team').value);
+  const avg=Math.round((t+p+pr+tm)/4*20);
+  const finalScore=score||avg;
+  if(!id||!eval_){showToast('IDs agent et évaluateur requis','error');return;}
+  state.evaluations.push({date:now(),agentId:id,evalId:eval_,score:finalScore,reco,notes});
+  addJournal('📊',`<strong>Évaluation</strong> : ${id} par ${eval_} — Score : ${finalScore}/100 — ${reco}`);
+  renderEvaluations(); updateStats();
+  clearForm('evaluations');
+  showToast('Évaluation enregistrée (score: '+finalScore+'/100)','success');
+}
+
+function renderEvaluations(){
+  const tbody=document.getElementById('eval-tbody');
+  document.getElementById('eval-count').textContent=state.evaluations.length+' évaluations';
+  if(!state.evaluations.length){ tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">AUCUNE ÉVALUATION ENREGISTRÉE</td></tr>'; return; }
+  const sc=s=>s>=80?'tag-green':s>=50?'tag-yellow':'tag-red';
+  tbody.innerHTML=[...state.evaluations].reverse().map(e=>`
+    <tr>
+      <td class="id-code">${e.date}</td>
+      <td><strong>${e.agentId}</strong></td>
+      <td class="id-code">${e.evalId}</td>
+      <td><span class="tag ${sc(e.score)}">${e.score}/100</span></td>
+      <td>${e.reco}</td>
+    </tr>`).join('');
+}
+
+// ══════════════ ADMIN PANEL ══════════════
+function renderAdminPanel(){
+  // Recrutements en attente
+  const r_pending=state.recrutements.filter(r=>r.statut==='En attente');
+  document.getElementById('admin-recrut-count').textContent=r_pending.length+' en attente';
+  const rt=document.getElementById('admin-recrut-tbody');
+  if(!r_pending.length){ rt.innerHTML='<tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">AUCUNE CANDIDATURE EN ATTENTE</td></tr>'; }
+  else rt.innerHTML=r_pending.map((r,i)=>{
+    const idx=state.recrutements.indexOf(r);
+    return `<tr>
+      <td class="id-code">${r.ref}</td><td><strong>${r.alias}</strong></td><td>${r.dept}</td>
+      <td><span class="tag tag-blue">${r.type}</span></td>
+      <td><span class="tag ${habColors[r.hab]}">Niv.${r.hab}</span></td>
+      <td class="id-code">${r.submittedBy}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-green btn-sm" onclick="adminAcceptRecrut(${idx})">✔ Accepter</button>
+        <button class="btn btn-danger btn-sm" onclick="adminRefus('recrut',${idx})">✗ Refuser</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  // Promotions en attente
+  const p_pending=state.promotions.filter(p=>p.statut==='En attente');
+  document.getElementById('admin-promo-count').textContent=p_pending.length+' en attente';
+  const pt=document.getElementById('admin-promo-tbody');
+  if(!p_pending.length){ pt.innerHTML='<tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">AUCUNE PROMOTION EN ATTENTE</td></tr>'; }
+  else pt.innerHTML=p_pending.map((p,i)=>{
+    const idx=state.promotions.indexOf(p);
+    return `<tr>
+      <td class="id-code">${p.date}</td><td><strong>${p.agentId}</strong></td>
+      <td><span class="tag ${habColors[p.oldHab]||'tag-gray'}">Niv.${p.oldHab}</span></td>
+      <td><span class="tag ${habColors[p.newHab]}">Niv.${p.newHab}</span></td>
+      <td><span class="tag tag-blue">${p.type.split(' ')[0]}</span></td>
+      <td class="id-code">${p.submittedBy}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-green btn-sm" onclick="adminAcceptPromo(${idx})">✔ Valider</button>
+        <button class="btn btn-danger btn-sm" onclick="adminRefus('promo',${idx})">✗ Refuser</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  // Sanctions en attente
+  const s_pending=state.sanctions.filter(s=>s.statut==='En attente');
+  document.getElementById('admin-sanction-count').textContent=s_pending.length+' en attente';
+  const st=document.getElementById('admin-sanction-tbody');
+  if(!s_pending.length){ st.innerHTML='<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">AUCUNE SANCTION EN ATTENTE</td></tr>'; }
+  else st.innerHTML=s_pending.map((s,i)=>{
+    const idx=state.sanctions.indexOf(s);
+    return `<tr>
+      <td class="id-code">${s.ref}</td><td><strong>${s.agentId}</strong></td><td>${s.type}</td>
+      <td><span class="tag ${gradeColors[s.grade]||'tag-gray'}">Grade ${s.grade}</span></td>
+      <td class="id-code">${s.rapp||'—'}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-green btn-sm" onclick="adminAcceptSanction(${idx})">✔ Valider</button>
+        <button class="btn btn-danger btn-sm" onclick="adminRefus('sanction',${idx})">✗ Refuser</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  // Mutations en attente
+  const m_pending=state.mutations.filter(m=>m.statut==='En attente');
+  document.getElementById('admin-mutation-count').textContent=m_pending.length+' en attente';
+  const mt=document.getElementById('admin-mutation-tbody');
+  if(!m_pending.length){ mt.innerHTML='<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;">AUCUNE MUTATION EN ATTENTE</td></tr>'; }
+  else mt.innerHTML=m_pending.map((m,i)=>{
+    const idx=state.mutations.indexOf(m);
+    const prioColor={Normal:'tag-gray',Urgent:'tag-orange','Immédiat':'tag-red'};
+    return `<tr>
+      <td class="id-code">${m.ref}</td><td><strong>${m.agentId}</strong></td><td>${m.dest}</td>
+      <td><span class="tag tag-blue">${m.motif.split(' ')[0]}</span></td>
+      <td><span class="tag ${prioColor[m.prio]||'tag-gray'}">${m.prio}</span></td>
+      <td><div class="td-actions">
+        <button class="btn btn-green btn-sm" onclick="adminAcceptMutation(${idx})">✔ Valider</button>
+        <button class="btn btn-danger btn-sm" onclick="adminRefus('mutation',${idx})">✗ Refuser</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// Admin Actions
+function adminAcceptRecrut(i){
+  const r=state.recrutements[i];
+  const newId=genId();
+  state.agents.push({id:newId,alias:r.alias,dept:r.dept,hab:r.hab,statut:'Actif',rang:'',createdAt:now()});
+  r.statut='Accepté';
+  addJournal('✅',`<strong>[ADMIN] Candidature acceptée</strong> : ${r.alias} → Intégré comme ${newId} [${r.dept}]`);
+  renderRecrutements(); renderAgents(); updateStats(); renderAdminPanel();
+  showToast(r.alias+' intégré comme '+newId,'success');
+}
+
+function adminAcceptPromo(i){
+  const p=state.promotions[i];
+  const agent=state.agents.find(a=>a.id.toLowerCase()===p.agentId.toLowerCase());
+  if(agent){ agent.hab=p.newHab; renderAgents(); }
+  p.statut='Validé';
+  addJournal('⭐',`<strong>[ADMIN] Promotion validée</strong> : ${p.agentId} Niv.${p.oldHab}→Niv.${p.newHab}`);
+  renderPromotions(); updateStats(); renderAdminPanel();
+  showToast('Promotion validée pour '+p.agentId,'success');
+}
+
+function adminAcceptSanction(i){
+  const s=state.sanctions[i];
+  s.statut='En traitement';
+  addJournal('⚠',`<strong>[ADMIN] Sanction validée</strong> [Grade ${s.grade}] : ${s.agentId} — ${s.type}`);
+  renderSanctions(); updateStats(); renderAdminPanel();
+  showToast('Sanction Grade '+s.grade+' validée','error');
+}
+
+function adminAcceptMutation(i){
+  const m=state.mutations[i];
+  m.statut='Validé';
+  addJournal('🔄',`<strong>[ADMIN] Mutation validée</strong> : ${m.agentId} → ${m.dest}`);
+  renderMutations(); updateStats(); renderAdminPanel();
+  showToast('Mutation validée pour '+m.agentId,'success');
+}
+
+// Refus flow
+function adminRefus(type,idx){
+  pendingRefusCallback={type,idx};
+  document.getElementById('motif-text').value='';
+  openModal('modal-motif');
+}
+
+function confirmRefus(){
+  const motif=document.getElementById('motif-text').value.trim();
+  if(!motif){showToast('Motif requis','error');return;}
+  const {type,idx}=pendingRefusCallback;
+  if(type==='recrut'){
+    const r=state.recrutements[idx]; r.statut='Refusé';
+    addJournal('❌',`<strong>[ADMIN] Candidature refusée</strong> : ${r.alias} — ${motif}`);
+    renderRecrutements();
+  } else if(type==='promo'){
+    const p=state.promotions[idx]; p.statut='Refusé';
+    addJournal('❌',`<strong>[ADMIN] Promotion refusée</strong> : ${p.agentId} — ${motif}`);
+    renderPromotions();
+  } else if(type==='sanction'){
+    const s=state.sanctions[idx]; s.statut='Refusé';
+    addJournal('❌',`<strong>[ADMIN] Sanction refusée</strong> : ${s.agentId} — ${motif}`);
+    renderSanctions();
+  } else if(type==='mutation'){
+    const m=state.mutations[idx]; m.statut='Refusé';
+    addJournal('❌',`<strong>[ADMIN] Mutation refusée</strong> : ${m.agentId} → ${m.dest} — ${motif}`);
+    renderMutations();
+  }
+  updateStats(); renderAdminPanel();
+  closeModal('modal-motif');
+  pendingRefusCallback=null;
+  showToast('Refus enregistré','error');
+}
+
+// ══════════════ COMPTES ══════════════
+function renderComptes(){
+  const tbody=document.getElementById('comptes-tbody');
+  document.getElementById('comptes-count').textContent=state.comptes.length+' comptes';
+  tbody.innerHTML=state.comptes.map((c,i)=>`
+    <tr>
+      <td class="id-code">${c.login}</td>
+      <td><strong>${c.name}</strong></td>
+      <td><span class="tag ${c.role==='admin'?'tag-red':'tag-blue'}">${c.role==='admin'?'Administrateur':'Utilisateur RH'}</span></td>
+      <td class="id-code">${c.createdAt}</td>
+      <td class="id-code">${c.lastLogin||'Jamais'}</td>
+      <td><div class="td-actions">
+        ${c.login!=='admin'?`<button class="btn btn-danger btn-sm" onclick="deleteCompte(${i})">✗ Supprimer</button>`:'<span class="id-code">SYSTÈME</span>'}
+      </div></td>
+    </tr>`).join('');
+}
+
+function saveCompte(){
+  const login=document.getElementById('c-login').value.trim();
+  const pass=document.getElementById('c-pass').value;
+  const name=document.getElementById('c-name').value.trim();
+  const role=document.getElementById('c-role').value;
+  if(!login||!pass||!name){showToast('Tous les champs requis','error');return;}
+  if(pass.length<6){showToast('Mot de passe trop court (min 6)','error');return;}
+  if(state.comptes.find(c=>c.login===login)){showToast('Identifiant déjà utilisé','error');return;}
+  state.comptes.push({login,pass,name,role,createdAt:now(),lastLogin:null});
+  addJournal('👥',`<strong>Nouveau compte créé</strong> : ${name} [${login}] — Rôle : ${role==='admin'?'Admin':'Utilisateur'}`);
+  renderComptes();
+  closeModal('modal-compte');
+  showToast('Compte créé : '+login,'success');
+}
+
+function deleteCompte(i){
+  const c=state.comptes[i];
+  if(c.login==='admin'){showToast('Le compte admin système est protégé','error');return;}
+  if(!confirm(`Supprimer le compte de ${c.name} (${c.login}) ?`)) return;
+  state.comptes.splice(i,1);
+  addJournal('🗑',`<strong>Compte supprimé</strong> : ${c.name} [${c.login}]`);
+  renderComptes();
+  showToast('Compte supprimé','error');
+}
+
+// ══════════════ MON COMPTE ══════════════
+function renderCompteInfo(){
+  const el=document.getElementById('compte-content');
+  if(!currentUser||!el) return;
+  const a=currentUser.role==='admin';
+  el.innerHTML=`
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">Informations de Session</div></div>
+      <div style="padding:1.4rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div><div class="stat-label" style="font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:.4rem;">Nom affiché</div><div style="font-size:1.1rem;font-weight:600;color:var(--white);">${currentUser.name}</div></div>
+        <div><div class="stat-label" style="font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:.4rem;">Identifiant</div><div class="id-code" style="font-size:.9rem;color:var(--white);">${currentUser.login}</div></div>
+        <div><div class="stat-label" style="font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:.4rem;">Rôle</div><span class="tag ${a?'tag-red':'tag-blue'}">${a?'Administrateur':'Utilisateur RH'}</span></div>
+        <div><div class="stat-label" style="font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:.4rem;">Dernière connexion</div><div class="id-code" style="font-size:.8rem;">${currentUser.lastLogin||'—'}</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">Permissions</div></div>
+      <div style="padding:1rem 1.4rem;display:flex;flex-direction:column;gap:.5rem;">
+        ${[
+          ['Consulter les dossiers agents',true],
+          ['Soumettre des demandes (recrutement, mutations…)',true],
+          ['Soumettre des rapports disciplinaires',true],
+          ['Valider / Refuser des demandes',a],
+          ['Ajouter / Modifier / Supprimer des agents',a],
+          ['Gérer les comptes utilisateurs',a],
+          ['Vider le journal d\'activité',a],
+        ].map(([label,ok])=>`
+          <div style="display:flex;align-items:center;gap:.8rem;padding:.4rem 0;border-bottom:1px solid var(--border);">
+            <span style="color:${ok?'var(--green)':'var(--red)'};font-size:.9rem;">${ok?'✔':'✗'}</span>
+            <span style="font-family:'Rajdhani',sans-serif;font-size:.9rem;color:${ok?'var(--text)':'var(--text3)'};">${label}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ══════════════ STATS ══════════════
+function renderStats(){
+  const deptCount={},habCount={1:0,2:0,3:0,4:0,5:0},statCount={};
+  state.agents.forEach(a=>{
+    deptCount[a.dept]=(deptCount[a.dept]||0)+1;
+    habCount[a.hab]=(habCount[a.hab]||0)+1;
+    statCount[a.statut]=(statCount[a.statut]||0)+1;
+  });
+  const bar=(label,val,total,color)=>{
+    const pct=total?Math.round(val/total*100):0;
+    return `<div style="margin-bottom:.8rem;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:.82rem;color:var(--text2);">${label}</span><span style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--text3);">${val} (${pct}%)</span></div><div class="progress-bar"><div class="progress-fill" style="background:${color};width:${pct}%"></div></div></div>`;
+  };
+  const n=state.agents.length||1;
+  const colors=['#ff6b00','#4fc3f7','#00c853','#ffd600','#c0392b','#c39bd3','#1abc9c','#9b59b6','#e67e22'];
+  const noData='<div style="color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:.7rem;text-align:center;padding:1rem;">Aucune donnée</div>';
+  document.getElementById('stats-dept').innerHTML=Object.entries(deptCount).length?Object.entries(deptCount).map((e,i)=>bar(e[0],e[1],n,colors[i%colors.length])).join(''):noData;
+  document.getElementById('stats-hab').innerHTML=Object.entries(habCount).filter(e=>e[1]>0).map(e=>bar('Niv.'+e[0]+' — '+habNames[e[0]],e[1],n,['#ecf0f1','#3498db','#2ecc71','#e67e22','#e74c3c'][e[0]-1])).join('')||noData;
+  document.getElementById('stats-statut').innerHTML=Object.entries(statCount).length?Object.entries(statCount).map((e,i)=>bar(e[0],e[1],n,colors[i%colors.length])).join(''):noData;
+  const avgScore=state.evaluations.length?Math.round(state.evaluations.reduce((s,e)=>s+parseInt(e.score),0)/state.evaluations.length):0;
+  document.getElementById('stats-global').innerHTML=`<div style="display:flex;flex-direction:column;gap:.5rem;">${[
+    ['Total agents',state.agents.length,'var(--accent)'],
+    ['Agents actifs',state.agents.filter(a=>a.statut==='Actif').length,'var(--green)'],
+    ['Candidatures',state.recrutements.length,'var(--cyan)'],
+    ['Promotions',state.promotions.length,'var(--yellow)'],
+    ['Mutations',state.mutations.length,'var(--cyan)'],
+    ['Sanctions actives',state.sanctions.filter(s=>s.statut!=='Clos'&&s.statut!=='Refusé').length,'var(--red)'],
+    ['Évaluations',state.evaluations.length,'var(--accent)'],
+    ['Score moyen',avgScore+'/100','var(--green)'],
+    ['En attente validation',pendingCount(),'var(--yellow)'],
+  ].map(([l,v,c])=>`<div style="display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid var(--border);"><span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;">${l}</span><span style="font-family:'Teko',sans-serif;font-size:1.2rem;color:${c};">${v}</span></div>`).join('')}</div>`;
+}
+
+// ══════════════ FILTER / SEARCH ══════════════
+function filterTable(tbodyId,query){
+  const rows=document.getElementById(tbodyId).querySelectorAll('tr');
+  rows.forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(query.toLowerCase())?'':'none';});
+}
+
+function handleSearch(q){
+  if(q.length<2) return;
+  const fi=document.getElementById('filterPersonnel');
+  if(fi){fi.value=q; filterTable('personnel-tbody',q);}
+  showSection('personnel',document.querySelector('[onclick*=personnel]'));
+}
+
+// ══════════════ CLEAR FORM ══════════════
+function clearForm(section){
+  const maps={
+    recrutement:['r-alias','r-nom','r-valid','r-notes'],
+    promotions:['p-id','p-auth','p-notes'],
+    mutations:['m-id','m-notes'],
+    sanctions:['s-id','s-rapporteur','s-detail'],
+    evaluations:['e-id','e-eval','e-score','e-notes'],
+  };
+  (maps[section]||[]).forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+}
+
+// ══════════════ INIT ══════════════
+updateStats();
+</script>
+</body>
+</html>
